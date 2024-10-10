@@ -1,0 +1,13 @@
+{
+	"namespace": "DSP_Speed_and_Consumption_Tweaks",
+	"authorName":"Hiul_Dragonfel",
+	"author":"Hiul_Dragonfel",
+    "name": "DSP_Speed_and_Consumption_Tweaks",
+    "description": "This mod will tweak the speed and consumption of energy of drones, vessels and Icarus according to config file. Just Icarus for now.",
+    "version_number": "0.0.5",
+	"dependencies": [
+		"xiaoye97-BepInEx-5.4.17"
+	],
+    "website_url": "https://github.com/hiul-dragonfel/DSP_Speed_and_Consumption_Tweaks",
+	"FullName": "DSP_Speed_and_Consumption_Tweaks"	
+}
