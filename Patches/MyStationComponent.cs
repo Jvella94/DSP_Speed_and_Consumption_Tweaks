@@ -14,26 +14,45 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
     internal class MyStationComponent
     {
         /// <summary>
-        /// Patches the StationComponent Init method with prefix code.
+        /// Patches the Player Awake method with postfix code.
         /// </summary>
         /// <param name="__instance"></param>
-        [HarmonyPatch(nameof(StationComponent.Init))]
+        [HarmonyPatch(nameof(StationComponent.DetermineDispatch))]
         [HarmonyPrefix]
-        public static bool Init_Prefix(int _id, int _entityId, int _pcId, PrefabDesc _desc, EntityData[] _entityPool, int _extraStorage, bool _logisticShipWarpDrive)
+        public static bool DetermineDispatch_Prefix(StationComponent __instance)
         {
-            DSP_Speed_and_Consumption_TweaksPlugin.Log.LogDebug("In StationComponent Init method Prefix.");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("+------------------------------------------------+");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("| In StationComponent Constructor method Prefix |");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("+------------------------------------------------+");
+
+
+
+
             return true;
         }
 
         /// <summary>
-        /// Patches the StationComponent Init method with postfix code.
+        /// Patches the StationComponent CalcTripEnergyCost method with Prefix code.
         /// </summary>
         /// <param name="__instance"></param>
-        [HarmonyPatch(nameof(StationComponent.Init))]
-        [HarmonyPostfix]
-        public static void Init_Postfix(int _id, int _entityId, int _pcId, PrefabDesc _desc, EntityData[] _entityPool, int _extraStorage, bool _logisticShipWarpDrive)
+        [HarmonyPatch(nameof(StationComponent.CalcTripEnergyCost))]
+        [HarmonyPrefix]
+        public static bool CalcTripEnergyCost_Prefix(StationComponent __instance)
         {
-            DSP_Speed_and_Consumption_TweaksPlugin.Log.LogDebug("In StationComponent Init method Postfix.");
+            return false;
+        }
+
+        /// <summary>
+        /// Patches the StationComponent InternalTickLocal method with postfix code.
+        /// </summary>
+        /// <param name="__instance"></param>
+        [HarmonyPatch(nameof(StationComponent.InternalTickLocal))]
+        [HarmonyPostfix]
+        public static void InternalTickLocal_Postfix(StationComponent __instance)
+        {
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("+------------------------------------------------------+");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("| In StationComponent InternalTickLocal method Postfix |");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogDebug("+------------------------------------------------------+");
         }
     }
 }
