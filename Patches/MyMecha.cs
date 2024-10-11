@@ -96,9 +96,8 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpKeepingPowerPerSpeed : {__instance.warpKeepingPowerPerSpeed}");
 
-            __instance.maxWarpSpeed = Config.Mecha_WARP_CONFIG.maxWarpSpeedUseCoef.Value
-                ? Config.Mecha_WARP_CONFIG.maxWarpSpeedCoef.Value * __instance.maxWarpSpeed
-                    : Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "M"
+            __instance.maxWarpSpeed = 
+                      Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "M"
                     ? Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "AU"
                     ? Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "LY"
                     ? __instance.maxWarpSpeed
@@ -106,13 +105,9 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                         : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.AU
                         : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.M;
 
-            __instance.warpStartPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpStartPowerPerSpeedUseCoef.Value
-                ? __instance.warpStartPowerPerSpeed * Config.Mecha_WARP_CONFIG.warpStartPowerPerSpeedCoef.Value
-                    : Config.Mecha_WARP_CONFIG.warpStartPowerPerSpeed.Value;
+            __instance.warpStartPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpStartPowerPerSpeed.Value;
 
-            __instance.warpKeepingPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpKeepingPowerPerSpeedUseCoef.Value
-                ? __instance.warpKeepingPowerPerSpeed * Config.Mecha_WARP_CONFIG.warpKeepingPowerPerSpeedCoef.Value
-                    : Config.Mecha_WARP_CONFIG.warpKeepingPowerPerSpeed.Value;
+            __instance.warpKeepingPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpKeepingPowerPerSpeed.Value;
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxWarpSpeed             : {__instance.maxWarpSpeed}");
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");

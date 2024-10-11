@@ -24,7 +24,9 @@ namespace DSP_Speed_and_Consumption_Tweaks
         // 1.0.0
         private const string MyGUID = "com.hiul.DSP_Speed_and_Consumption_Tweaks";
         private const string PluginName = "DSP_Speed_and_Consumption_Tweaks";
-        private const string VersionString = "0.0.5";
+        public const string VersionString = "0.0.6";
+
+        
 
         public static ManualLogSource Log;
         public void Awake()

@@ -103,12 +103,14 @@
   <ItemGroup>
     <Content Include="icon.png" />
     <Content Include="LICENSE.txt" />
+    <None Include="CHANGELOG.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(ProjectDir)bin\plugin
 
 xcopy /Y $(ProjectDir)README.md $(ProjectDir)\bin\plugin
+xcopy /Y $(ProjectDir)CHANGELOG.md $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)manifest.json $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)icon.png $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)LICENSE.txt $(ProjectDir)\bin\plugin

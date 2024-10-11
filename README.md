@@ -10,6 +10,7 @@ It also adjusts the enregy consumption of each 3 entities.
 
 Il made this mod to be able to make huge maps on Galactic scale 2 because the distances where too great and vessels where taking hours to travel subluminal and Icarus hadn't enought energy to travel interstelar.
 
+V 0.0.6 Added Support for Logistics Drones and removed Coeficients from config File (also corrected some Typos)
 
 V 0.0.5 First usable build to be put on Thunderstore. It implements the tweakings for Icarus Cruise and Warp Speed and there energy consumptions.
 

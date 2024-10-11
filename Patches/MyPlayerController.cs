@@ -33,9 +33,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.max_acc       : {__instance.max_acc}.");
             
-            __instance.max_acc = Config.Mecha_CRUISE_CONFIG.CruiseAccelerationUseCoef.Value 
-                    ? Config.Mecha_CRUISE_CONFIG.CruiseMaxAccelerationRateCoef.Value * 20f 
-                    : Config.Mecha_CRUISE_CONFIG.CruiseMaxAccelerationRate.Value;
+            __instance.max_acc = Config.Mecha_CRUISE_CONFIG.CruiseMaxAccelerationRate.Value;
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"New value of __instance.max_acc   : {__instance.max_acc}.");
 

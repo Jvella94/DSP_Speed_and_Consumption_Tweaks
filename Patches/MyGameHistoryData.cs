@@ -48,6 +48,8 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
         }
 
+        
+
         /// <summary>
         ///     applyPatch
         public static void applyPatch(ref GameHistoryData __instance)
@@ -58,17 +60,20 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeedScale   : {__instance.logisticDroneSpeedScale}");
+            __instance.logisticDroneSpeed = (float)Config.Logistic_DRONE_CONFIG.DroneMaxSpeed.Value;
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
+
+
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipSailSpeed     : {__instance.logisticShipSailSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipSpeedScale    : {__instance.logisticShipSpeedScale}");
+            
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipWarpSpeed     : {__instance.logisticShipWarpSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipSpeedScale    : {__instance.logisticShipSpeedScale}");
+            
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipWarpDrive     : {__instance.logisticShipWarpDrive}");
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticCourierSpeed      : {__instance.logisticCourierSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticCourierSpeedScale : {__instance.logisticCourierSpeedScale}");
+            
         }
     }
 }
