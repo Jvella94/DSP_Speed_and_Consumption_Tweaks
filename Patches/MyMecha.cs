@@ -68,9 +68,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");
 
-            __instance.maxSailSpeed = Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUseCoef.Value 
-                ? Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedCoef.Value * __instance.maxSailSpeed 
-                    : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "M"
+            __instance.maxSailSpeed = Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "M"
                     ? Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "AU"
                     ? Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "LY"
                     ? __instance.maxSailSpeed 
@@ -78,9 +76,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                         : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.AU 
                         : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.M;
             
-            __instance.thrustPowerPerAcc = Config.Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCostUseCoef.Value 
-                ? __instance.thrustPowerPerAcc * Config.Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCostCoef.Value
-                : Config.Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCost.Value;
+            __instance.thrustPowerPerAcc = Config.Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCost.Value;
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");

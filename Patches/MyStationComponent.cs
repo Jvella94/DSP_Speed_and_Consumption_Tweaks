@@ -37,7 +37,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------------------------------+");
             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In StationComponent DetermineDispatch method Transpiler |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------------------------------+")
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------------------------------+");
 
             var matcher = new CodeMatcher(codeInstructions, il)
                 .MatchForward(true,
