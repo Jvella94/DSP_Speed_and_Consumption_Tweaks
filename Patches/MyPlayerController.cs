@@ -27,15 +27,19 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         [HarmonyPostfix]
         public static void Init_Postfix(PlayerMove_Sail __instance)
         {
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In PlayerMove_Sail.Init method Postfix |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In PlayerMove_Sail.Init method Postfix |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.max_acc       : {__instance.max_acc}.");
-            
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.max_acc       : {__instance.max_acc}.");
+            }
             __instance.max_acc = Config.Mecha_CRUISE_CONFIG.CruiseMaxAccelerationRate.Value;
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"New value of __instance.max_acc   : {__instance.max_acc}.");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"New value of __instance.max_acc   : {__instance.max_acc}.");
+            }
 
         }
     }

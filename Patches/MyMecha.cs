@@ -27,9 +27,12 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         [HarmonyPostfix]
         public static void SetForNewGame_Postfix(Mecha __instance)
         {
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|  In Mecha SetForNewGame method Postfix |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|  In Mecha SetForNewGame method Postfix |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            }
             applyPatch(ref __instance);
         }
 
@@ -41,9 +44,12 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         [HarmonyPostfix]
         public static void Import_Postfix(Mecha __instance, BinaryReader r)
         {
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|      In Mecha Import method Postfix    |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|      In Mecha Import method Postfix    |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            }
             applyPatch(ref __instance);
         }
 
@@ -56,59 +62,63 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             //////////////////////////////////////////////////////////////////////////////
             // CRUISE CONFIG INIT
             //////////////////////////////////////////////////////////////////////////////
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|              In applyPatch             |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|              In applyPatch             |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|       CRUISE engine Configuration      |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+"); 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|       CRUISE engine Configuration      |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");
-
-            __instance.maxSailSpeed = Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "M"
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");
+            }
+            __instance.maxSailSpeed = (float)(Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "M"
                     ? Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "AU"
                     ? Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeedUnit.Value != "LY"
                     ? __instance.maxSailSpeed 
                         : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.LY 
                         : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.AU 
-                        : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.M;
+                        : Config.Mecha_CRUISE_CONFIG.MaxCruiseSpeed.Value * Config.M);
             
             __instance.thrustPowerPerAcc = Config.Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCost.Value;
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");
-
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxSailSpeed         : {__instance.maxSailSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.thrustPowerPerAcc    : {__instance.thrustPowerPerAcc}");
+            }
             ////////////////////////////////////////////////////////////////////////////////
             // WARP CONFIG INIT
             ////////////////////////////////////////////////////////////////////////////////
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|        WARP engine Configuration       |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxWarpSpeed             : {__instance.maxWarpSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpKeepingPowerPerSpeed : {__instance.warpKeepingPowerPerSpeed}");
-
-            __instance.maxWarpSpeed = 
-                      Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "M"
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|        WARP engine Configuration       |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxWarpSpeed             : {__instance.maxWarpSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpKeepingPowerPerSpeed : {__instance.warpKeepingPowerPerSpeed}");
+            }
+            __instance.maxWarpSpeed =
+                      (float)(Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "M"
                     ? Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "AU"
                     ? Config.Mecha_WARP_CONFIG.maxWarpSpeedUnit.Value != "LY"
                     ? __instance.maxWarpSpeed
                         : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.LY
                         : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.AU
-                        : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.M;
+                        : Config.Mecha_WARP_CONFIG.maxWarpSpeed.Value * Config.M);
 
             __instance.warpStartPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpStartPowerPerSpeed.Value;
 
             __instance.warpKeepingPowerPerSpeed = Config.Mecha_WARP_CONFIG.warpKeepingPowerPerSpeed.Value;
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxWarpSpeed             : {__instance.maxWarpSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpKeepingPowerPerSpeed : {__instance.warpKeepingPowerPerSpeed}");
-
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.maxWarpSpeed             : {__instance.maxWarpSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpStartPowerPerSpeed   : {__instance.warpStartPowerPerSpeed}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"values of __instance.warpKeepingPowerPerSpeed : {__instance.warpKeepingPowerPerSpeed}");
+            }
 
         }
     }

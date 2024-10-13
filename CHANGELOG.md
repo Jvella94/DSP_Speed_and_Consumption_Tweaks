@@ -1,3 +1,5 @@
+V 1.0.0 Yesssss All the basic features are here Icarus, Ships, Drone and some extras (dependent on shipCruiseSpeed) DF carrier and Relay Stations.
+
 V 0.0.6 Added Support for Logistics Drones and removed Coeficients from config File (also corrected some Typos)
 
 V 0.0.5 First usable build to be put on Thunderstore. It implements the tweakings for Icarus Cruise and Warp Speed and there energy consumptions.

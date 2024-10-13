@@ -2,13 +2,13 @@
 
 ***** source https://github.com/hiul-dragonfel/DSP_Speed_and_Consumption_Tweaks *****
 
-
-
 This mod is meant to be able to tweak the speed at whitch cargo drones, vessels and Icarus can travel.
 It also adjusts the enregy consumption of each 3 entities.
 
 
 Il made this mod to be able to make huge maps on Galactic scale 2 because the distances where too great and vessels where taking hours to travel subluminal and Icarus hadn't enought energy to travel interstelar.
+
+V 1.0.0 Yesssss All the basic features are here Icarus, Ships, Drone and some extras (dependent on shipCruiseSpeed) DF carrier and Relay Stations.
 
 V 0.0.6 Added Support for Logistics Drones and removed Coeficients from config File (also corrected some Typos)
 

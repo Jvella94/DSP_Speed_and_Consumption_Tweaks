@@ -27,8 +27,10 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         [HarmonyPatch(nameof(GameHistoryData.Import))]
         [HarmonyPostfix]
         public static void ImportPostfix(GameHistoryData __instance, BinaryReader r){
-            
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In GameHistoryData Import method Postfix.");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In GameHistoryData Import method Postfix.");
+            }
 
             applyPatch(ref __instance);
         }
@@ -41,8 +43,10 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         [HarmonyPostfix]
         public static void SetForNewGamePostfix(GameHistoryData __instance)
         {
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In GameHistoryData SetForNewGame method Postfix.");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In GameHistoryData SetForNewGame method Postfix.");
+            }
 
             applyPatch(ref __instance);
 
@@ -54,25 +58,58 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         ///     applyPatch
         public static void applyPatch(ref GameHistoryData __instance)
         {
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In applyPatch");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|      CRUISE engine Configuration       |");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In applyPatch");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|      Drones engine Configuration       |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            }
 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
+            }
+
             __instance.logisticDroneSpeed = (float)Config.Logistic_DRONE_CONFIG.DroneMaxSpeed.Value;
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticDroneSpeed        : {__instance.logisticDroneSpeed}");
+            }
+
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|   Ships CRUISE engine Configuration    |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipSailSpeed     : {__instance.logisticShipSailSpeed}");
+            }
+            __instance.logisticShipSailSpeed = 
+                (float)(Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value != "M"
+                ? Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value != "AU"
+                ? Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value != "LY"
+                ? __instance.logisticShipSailSpeed
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.LY
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.AU
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.M);
+
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|    Ships WARP engine Configuration     |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipWarpSpeed     : {__instance.logisticShipWarpSpeed}");
+            }
+            __instance.logisticShipWarpSpeed = (float)(Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeedUnits.Value != "M"
+                ? Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeedUnits.Value != "AU"
+                ? Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeedUnits.Value != "LY"
+                ? __instance.logisticShipWarpSpeed
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.LY
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.AU
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.M);
 
 
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipSailSpeed     : {__instance.logisticShipSailSpeed}");
-            
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipWarpSpeed     : {__instance.logisticShipWarpSpeed}");
-            
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticShipWarpDrive     : {__instance.logisticShipWarpDrive}");
-
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticCourierSpeed      : {__instance.logisticCourierSpeed}");
+            //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticCourierSpeed      : {__instance.logisticCourierSpeed}");
             
         }
     }
