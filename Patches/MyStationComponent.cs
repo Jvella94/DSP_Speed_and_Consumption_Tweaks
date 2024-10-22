@@ -303,6 +303,10 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             var codeInstructions = instructions as CodeInstruction[] ?? instructions.ToArray();
             var matcher = new CodeMatcher(codeInstructions, il);
+            double maxCruiseShipSpeed = (double)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * (
+                Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value == "LY" ? Config.LY
+                : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value == "AU" ? Config.AU
+                : 1.0);
 
             matcher.MatchForward(true,
                 new CodeMatch(i => i.opcode == OpCodes.Ldelema),
@@ -319,10 +323,9 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  après  ---------------------");
             }
             float maxShipAtmoSpeed = (float)Config.Logistic_SHIP_CONFIG.maxShipAtmoSpeed.Value;
-            float shipSailSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value;
             matcher.Advance(-2);
             matcher.RemoveInstructions(3);
-            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipAtmoSpeed < shipSailSpeed * 0.03 ? maxShipAtmoSpeed : shipSailSpeed * 0.03)));
+            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipAtmoSpeed));
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -344,11 +347,15 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 7);
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  après  ---------------------");
             }
-            float maxShipNearSpeed = (float)Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value;
+            float maxShipNearSpeed = (float)(
+                Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value > maxCruiseShipSpeed 
+                ? maxCruiseShipSpeed * 0.5 : 
+                Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value
+            );
 
             matcher.Advance(-4);
             matcher.RemoveInstructions(5);
-            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipNearSpeed < shipSailSpeed * 0.12 * Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) ? maxShipNearSpeed : shipSailSpeed * 0.12 * Mathf.Pow(shipSailSpeed / 600.0f, 0.4f))));
+            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipNearSpeed));
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -382,7 +389,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             matcher.Advance(-4);
             matcher.RemoveInstructions(5);
-            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipTaxiSpeed < Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) * 0.006 + 1E-05f ? maxShipTaxiSpeed : Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) * 0.006 + 1E-05f)));
+            matcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipTaxiSpeed));
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -448,7 +455,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             matcher.RemoveInstructions(2);
             matcher.InsertAndAdvance(
                 new CodeInstruction(OpCodes.Pop, 0),
-                new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipTaxiSpeed < Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) * 0.006 + 1E-05f ? maxShipTaxiSpeed : Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) * 0.006 + 1E-05f))
+                new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipTaxiSpeed)
             );
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
@@ -479,7 +486,8 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             matcher.RemoveInstructions(2);
             matcher.InsertAndAdvance(
                 new CodeInstruction(OpCodes.Pop, 0),
-                new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipAtmoSpeed < shipSailSpeed * 0.03 ? maxShipAtmoSpeed : shipSailSpeed * 0.03)));
+                new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipAtmoSpeed)
+            );
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -506,13 +514,25 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 7);
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  après  ---------------------");
             }
-            float maxShipNearSpeed = (float)Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value;
+
+            double maxCruiseShipSpeed = (double)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * (
+                Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value == "LY" ? Config.LY
+                : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits.Value == "AU" ? Config.AU
+                : 1.0);
+
+            float maxShipNearSpeed = (float)(
+                Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value > maxCruiseShipSpeed
+                ? maxCruiseShipSpeed * 0.5 :
+                Config.Logistic_SHIP_CONFIG.maxShipNearSpeed.Value
+            );
+
 
             matcher.Advance(-2);
             matcher.RemoveInstructions(2);
             matcher.InsertAndAdvance(
                 new CodeInstruction(OpCodes.Pop, 0), 
-                new CodeInstruction(OpCodes.Ldc_R4, (float)(maxShipNearSpeed < shipSailSpeed * 0.12 * Mathf.Pow(shipSailSpeed / 600.0f, 0.4f) ? maxShipNearSpeed : shipSailSpeed * 0.12 * Mathf.Pow(shipSailSpeed / 600.0f, 0.4f))));
+                new CodeInstruction(OpCodes.Ldc_R4, (float)maxShipNearSpeed)
+            );
 
             //if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             //{

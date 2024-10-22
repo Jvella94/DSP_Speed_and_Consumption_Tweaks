@@ -1,3 +1,5 @@
+V 1.0.2 Cleanup of the config file and the code
+
 V 1.0.1 Removed log prints
 
 V 1.0.0 Yesssss All the basic features are here Icarus, Ships, Drone and some extras (dependent on shipCruiseSpeed) DF carrier and Relay Stations.

@@ -12,6 +12,7 @@ If you have any suggestions your welcome to find me on discord
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
 
+V 1.0.2 Cleanup of the config file and the code
 
 V 1.0.1 Removed log prints
 
