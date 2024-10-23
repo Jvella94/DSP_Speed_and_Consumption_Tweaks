@@ -5,12 +5,15 @@
 This mod is meant to be able to tweak the speed at whitch cargo drones, vessels and Icarus can travel.
 It also adjusts the enregy consumption of each 3 entities.
 
-
 Il made this mod to be able to make huge maps on Galactic scale 2 because the distances where too great and vessels where taking hours to travel subluminal and Icarus hadn't enought energy to travel interstelar.
+
+Ofcourse compatible with GS2, I don't know if it is compatible with nebula
 
 If you have any suggestions your welcome to find me on discord 
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
+
+V 1.0.3 Correction to the manifest
 
 V 1.0.2 Cleanup of the config file and the code
 
