@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using HarmonyLib;
 using UnityEngine;
+using static DSP_Speed_and_Consumption_Tweaks.DSP_Speed_and_Consumption_Tweaks_Plugin;
 
 namespace DSP_Speed_and_Consumption_Tweaks.Patches
 {
@@ -28,51 +33,112 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         {
             var codeInstructions = instructions as CodeInstruction[] ?? instructions.ToArray();
             var matcher = new CodeMatcher(codeInstructions, il);
+            StringCollection expectedInstructions;
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------------+");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In CarrierSailLogic method Transpiler |");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+--------------------------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In DFRelayComponent CarrierSailLogic method Transpiler |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+--------------------------------------------------------+");
+                
+                if (generateCsvFile)
+                {
+                    try
+                    {
+                        using (FileStream FS = new FileStream(pluginPath + "/expectedInstructionsNew.csv", FileMode.Append, FileAccess.Write))
+                        {
+                            //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError($"this is the content we want to write to file {pluginPath + "/expectedInstructions.csv"}\n{strexpectedInstructions}");
+
+                            StringCollection strexpectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 1000000);
+                            byte[] strexpectedInstructionsBytes;
+                            foreach (string expectedInstruction in strexpectedInstructions)
+                            {
+                                strexpectedInstructionsBytes = Encoding.UTF8.GetBytes(
+                                    expectedInstruction
+                                );
+                                strexpectedInstructionsBytes = strexpectedInstructionsBytes.Concat(Encoding.UTF8.GetBytes("\n")).ToArray();
+
+                                //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError($"The length of the Bytes array is {strexpectedInstructionsBytes.Length} and it's count is {strexpectedInstructionsBytes.Count()}");
+                                FS.Write(strexpectedInstructionsBytes, 0, strexpectedInstructionsBytes.Length);
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError();
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"Error writing to file {pluginPath + "/expectedInstructions.csv"}");
+
+                        //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError();
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError(e.ToString());
+
+                    }
+
+                }
+                
             }
 
             matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (i.operand.ToString() == "1800"))
+                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && Convert.ToInt32(i.operand) == 1800)
                 );
 
             float maxCarrierCruiseSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * 1.5f;
-            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            if (matcher.IsValid)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------------  avant  ------------------");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 10);
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
 
                 matcher.RemoveInstruction();
                 matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxCarrierCruiseSpeed));
 
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------------  après  ------------------");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 10);
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("---------------------------------------------");
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
             }
 
             matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (i.operand.ToString() == "1800"))
+                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (Convert.ToDouble(i.operand) == 1800))
                 );
 
-            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            if (matcher.IsValid)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------------  avant  ------------------");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 4);
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 775);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
 
                 matcher.RemoveInstruction();
                 matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxCarrierCruiseSpeed));
 
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------------  après  ------------------");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.printInstructions(ref matcher, 4);
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("---------------------------------------------");
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("-----------------------  after  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
+                
             }
+            
             if (matcher.IsInvalid)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("Failed to apply CarrierSailLogic patch");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 200000);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($" {expectedInstruction}");
                 return codeInstructions;
             }
             return matcher.InstructionEnumeration();
@@ -88,33 +154,91 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
         {
             var codeInstructions = instructions as CodeInstruction[] ?? instructions.ToArray();
             var matcher = new CodeMatcher(codeInstructions, il);
+            StringCollection expectedInstructions;
 
-            float maxRelayCruiseSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * 1.5f;
+            float maxRelayCruiseSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * 2.0f;
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+-------------------------------------+");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In RelaySailLogic method Transpiler |");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+-------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+------------------------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("| In DFRelayComponent RelaySailLogic method Transpiler |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+------------------------------------------------------+");
+                if (generateCsvFile)
+                {
+                    try
+                    {
+                        using (FileStream FS = new FileStream(pluginPath + "/expectedInstructionsNew.csv", FileMode.Append, FileAccess.Write))
+                        {
+                            //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError($"this is the content we want to write to file {pluginPath + "/expectedInstructions.csv"}\n{strexpectedInstructions}");
+
+                            StringCollection strexpectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 1000000);
+                            byte[] strexpectedInstructionsBytes;
+                            foreach (string expectedInstruction in strexpectedInstructions)
+                            {
+                                strexpectedInstructionsBytes = Encoding.UTF8.GetBytes(
+                                    expectedInstruction
+                                );
+                                strexpectedInstructionsBytes = strexpectedInstructionsBytes.Concat(Encoding.UTF8.GetBytes("\n")).ToArray();
+
+                                //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError($"The length of the Bytes array is {strexpectedInstructionsBytes.Length} and it's count is {strexpectedInstructionsBytes.Count()}");
+                                FS.Write(strexpectedInstructionsBytes, 0, strexpectedInstructionsBytes.Length);
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError();
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"Error writing to file {pluginPath + "/expectedInstructions.csv"}");
+
+                        //DSP_Speed_and_Consumption_Tweaks_Plugin.LogError();
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError(e.ToString());
+
+                    }
+
+                }
             }
 
             matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (i.operand.ToString() == "1000"))
+                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (Convert.ToDouble(i.operand) == 1000))
                 );
+            if (matcher.IsValid)
+            {
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("--------------  max Relay Cruise Speed  --------------");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 587);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
 
-            matcher.RemoveInstruction();
-            matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
+                matcher.RemoveInstruction();
+                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
 
-            matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (i.operand.ToString() == "1000"))
-                );
+                matcher.MatchForward(true,
+                        new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (Convert.ToSingle(i.operand) == 1000.0f))
+                    );
 
-            matcher.RemoveInstruction();
-            matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
+                matcher.RemoveInstruction();
+                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
+
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  after   ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 587);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------------------------------------------------");
+                }
+            }
 
             if (matcher.IsInvalid)
             {
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("Failed to apply RelaySailLogic patch");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 2000000);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($" {expectedInstruction}");
                 return codeInstructions;
             }
 

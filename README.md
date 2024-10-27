@@ -13,6 +13,8 @@ If you have any suggestions your welcome to find me on discord
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
 
+V 1.1.0 Added debugging log outputs
+
 V 1.0.3 Correction to the manifest
 
 V 1.0.2 Cleanup of the config file and the code

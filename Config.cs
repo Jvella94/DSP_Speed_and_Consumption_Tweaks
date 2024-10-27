@@ -18,6 +18,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         private static readonly string LOGISTIC_SHIP_WARP = "Logistic Ships Warp Configuration";
         private static readonly string LOGISTIC_SHIP_SAIL = "Logistic Ships Cruise Configuration";
         private static readonly string LOGISTIC_DRONE_CONFIG = "Logistic Drones Configuration";
+        private static readonly string DEBUG_CONFIG = "Activate DEBUG messages";
         //private static readonly string UTILITY_SECTION = "Utility";
 
         public static readonly double LY = 2400000;
@@ -81,6 +82,11 @@ namespace DSP_Speed_and_Consumption_Tweaks
         }
             
 
+        public static class Debug_CONFIG
+        {
+            public static ConfigEntry<bool> DEBUG;
+        }
+
         //public static class Utility
         //{
         //    public static ConfigEntry<bool> DisableMod;
@@ -88,6 +94,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         //}
         internal static void Init(ConfigFile config)
         {
+            
             /////////////////////////////////
             // ICARUS Cruise Configuration //
             /////////////////////////////////
@@ -213,6 +220,12 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 new ConfigDescription("Energy consumption on take off for Logistic Ships. (Vanilla is 6000000)",
                 new AcceptableValueRange<double>(0.0, 12000000.0), null ));
 
+            //////////////////////////////////
+            // DEBUG CONFIG                 //
+            //////////////////////////////////
+            Debug_CONFIG.DEBUG = config.Bind(DEBUG_CONFIG, "Debug messages :", false,
+                new ConfigDescription("Enable debug messages",
+                new AcceptableValueList<bool>(true, false), null));
 
         }
     }

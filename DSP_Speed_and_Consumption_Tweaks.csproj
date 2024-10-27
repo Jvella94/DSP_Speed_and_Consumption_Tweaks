@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -53,14 +53,16 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\jeux\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\jeux\r2modman\Data\DysonSphereProgram\profiles\debug\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\jeux\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\..\jeux\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
+    <Reference Include="BepInEx, Version=5.4.23.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\jeux\r2modman\Data\DysonSphereProgram\profiles\debug\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,6 +98,7 @@
     <Compile Include="Utils\ModDebug.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="expectedInstructions.csv" />
     <None Include="manifest.json" />
     <None Include="README.md" />
     <None Include="README.md" />
@@ -115,6 +118,7 @@ xcopy /Y $(ProjectDir)CHANGELOG.md $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)manifest.json $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)icon.png $(ProjectDir)\bin\plugin
 xcopy /Y $(ProjectDir)LICENSE.txt $(ProjectDir)\bin\plugin
+xcopy /Y $(ProjectDir)expectedInstructions.csv $(ProjectDir)\bin\plugin
 
 xcopy /Y $(TargetPath) $(ProjectDir)bin\plugin
 

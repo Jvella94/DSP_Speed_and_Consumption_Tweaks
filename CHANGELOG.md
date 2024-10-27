@@ -1,3 +1,6 @@
+
+V 1.1.0 Added debugging log outputs
+
 V 1.0.3 Correction d=to the manifest
 
 V 1.0.2 Cleanup of the config file and the code
