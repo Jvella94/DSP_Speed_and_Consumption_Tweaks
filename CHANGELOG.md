@@ -1,5 +1,5 @@
 
-V 1.1.0 Added debugging log outputs
+V 1.1.0 Added debugging log outputs and corrected a major bug where computers with period as a decimal separator would crash the mod.
 
 V 1.0.3 Correction d=to the manifest
 
