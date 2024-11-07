@@ -15,13 +15,13 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Reflection.Emit;
+using System.Diagnostics.Eventing.Reader;
 
 namespace DSP_Speed_and_Consumption_Tweaks
 {
     // TODO Review this file and update to your own requirements.
     
-
-
     [BepInPlugin(MyGUID, PluginName, VersionString)]
     [BepInProcess("DSPGAME.exe")]
     //[BepInDependency("dsp.galactic-scale.2")]
@@ -196,35 +196,69 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 if (inRange)
                 {
                     instructions.Add(
-                        $"{functionName}," +
-                        $"{(i == 0 ? ">>>>" : "")}," +
-                        $"{codeMatcher.Pos + i}, " +
-                        $"{codeMatcher.InstructionAt(i).opcode}, " +
-                        $"\"{codeMatcher.InstructionAt(i).operand}\"," +
-                        $"{(expectedRegion[i - min].expectedInstructionPosition == expectedInstructionPosition ? ">>>>" : "")}," +
-                        $"{expectedRegion[i - min].expectedInstructionPosition}, " +
-                        $"{expectedRegion[i - min].expectedOpcode}, " +
-                        $"\"{expectedRegion[i - min].expectedOperand}\""
+                        $"{functionName, -50}," +
+                        $"{(i == 0 ? ">>>>" : ""),-4}," +
+                        $"{codeMatcher.Pos + i, -4}, " +
+                        $"{codeMatcher.InstructionAt(i).opcode, -10}, " +
+                        $"\"{codeMatcher.InstructionAt(i).operand, -50}\"," +
+                        $"{(expectedRegion[i - min].expectedInstructionPosition == expectedInstructionPosition ? ">>>>" : ""),-4}," +
+                        $"{expectedRegion[i - min].expectedInstructionPosition, -4}, " +
+                        $"{expectedRegion[i - min].expectedOpcode, -10}, " +
+                        $"\"{expectedRegion[i - min].expectedOperand, -50}\""
                     );
                 }
                 else
                 {
                     instructions.Add(
-                        $"{functionName}," +
-                        $"{(i == 0 ? ">>>>" : "")}," +
-                        $"{codeMatcher.Pos + i}, " +
-                        $"{codeMatcher.InstructionAt(i).opcode}, " +
-                        $"\"{codeMatcher.InstructionAt(i).operand}\"," +
+                        $"{functionName, -50}," +
+                        $"{(i == 0 ? ">>>>" : ""),-4}," +
+                        $"{codeMatcher.Pos + i,-4}, " +
+                        $"{codeMatcher.InstructionAt(i).opcode,-10}, " +
+                        $"\"{codeMatcher.InstructionAt(i).operand,-50}\"," +
                         $"None," +
                         $"None," +
-                        $"None," +
-                        $"None"
+                        $"None      ," +
+                        $"None                                              "
                     );
                 }
-                
+                foreach (Label label in codeMatcher.InstructionAt(i).labels)
+                    instructions.Add($"    label: {label, 70}");
             }
             
             return instructions;
+        }
+
+        private static int sizeOperand(string operandType)
+        {
+            switch (operandType)
+            {
+                case "Int32":
+                case "System.Int32":
+                case "Single":
+                case "System.Single":
+                    return 4;
+                case "Double":
+                case "System.Double":
+                case "Long":
+                case "System.Long":
+                    return 8;
+                default:
+                    return 0;
+            }
+        }
+
+        private static int sizeInstruction(CodeInstruction instruction)
+        {
+            Regex regex = new Regex(@"[0-9A-Za-z.]+");
+            Match match = regex.Match(instruction.operand.ToString());
+            int size = 0;
+            if (instruction.opcode == OpCodes.Call
+                || instruction.opcode == OpCodes.Callvirt
+                || instruction.opcode == OpCodes.Newobj
+                || instruction.opcode == OpCodes.Calli) size = 5; // instruction always 1 Byte and 4 Bytes adresse of function
+            
+            else size = 1;
+            return size;
         }
 
         // Mod specific details. MyGUID should be unique, and follow the reverse domain pattern
@@ -235,7 +269,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         // 1.0.0
         private const string MyGUID = "com.hiul.DSP_Speed_and_Consumption_Tweaks";
         private const string PluginName = "DSP_Speed_and_Consumption_Tweaks";
-        public const string VersionString = "1.1.0";
+        public const string VersionString = "1.2.0";
         public static bool DEBUG = false;
         public static StringCollection expectedInstructions = null;
         public static string pluginPath = "";
@@ -406,7 +440,21 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|    Patching GameHistoryData     |");
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------+");
             }
-            harmony.PatchAll(typeof(MyGameHistoryData));
+            try
+            {
+                harmony.PatchAll(typeof(MyGameHistoryData));
+            }
+            catch (Exception e)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("+--------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("|    Patching GameHistoryData Error    |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("+--------------------------------------+");
+                foreach (var item in e.Data)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"|    item : {item.ToString()}      |");
+                }
+            }
+            
             if (DEBUG)
             {
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
@@ -428,7 +476,23 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|        Patching StationComponent       |");
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
             }
-            harmony.PatchAll(typeof(MyStationComponent));
+            try
+            {
+                harmony.PatchAll(typeof(MyStationComponent));
+            }
+            catch (Exception e)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("+--------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("|    Patching StationComponent Error   |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError("+--------------------------------------+");
+
+                
+                foreach (var item in e.InnerException.Data)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"|    item : {item.ToString()}      |");
+                }
+            }
+            
 
             if (DEBUG)
             {

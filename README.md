@@ -13,6 +13,8 @@ If you have any suggestions your welcome to find me on discord
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
 
+V 1.2.0 Correction to the speed of vessels near planets (more aesthetic), correction to ETA computations.
+
 V 1.1.0 Added debugging log outputs and corrected a major bug where computers with period as a decimal separator would crash the mod.
 
 V 1.0.3 Correction to the manifest

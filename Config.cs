@@ -52,9 +52,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         public static class Logistic_SHIP_CONFIG
         {
             //// ship settings
-            public static ConfigEntry<double> maxShipNearSpeed;
-            public static ConfigEntry<double> maxShipAtmoSpeed; 
-            public static ConfigEntry<double> maxShipTaxiSpeed; 
+            public static ConfigEntry<double> approchSpeed;
        
             public static ConfigEntry<double> ShipMaxCruiseSpeed;
             public static ConfigEntry<string> ShipMaxCruiseSpeedUnits;
@@ -152,12 +150,12 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 new ConfigDescription("Base max speed of Logistic Drones. ",
                 new AcceptableValueRange<double>(0.0, 1000.0), null ));
 
-            Logistic_DRONE_CONFIG.DroneMaxTaxiSpeed = config.Bind(LOGISTIC_DRONE_CONFIG, "Maximum taxi speed (Vanilla is sqrt(droneMaxSpeed / 8)).", 0.5,
+            Logistic_DRONE_CONFIG.DroneMaxTaxiSpeed = config.Bind(LOGISTIC_DRONE_CONFIG, "Maximum taxi speed (Vanilla is sqrt(droneMaxSpeed / 8)).", 50.0,
                 new ConfigDescription("max taxi speed of Logistic Drones. (The taxi speed is manoeuvering speed at the Station)"
                 + "\nIt was just too unnatural to see the Drones or Ships docking at ligth speed and it removed a lot of the game's aesthics."
-                + "\nI made it be 0.5 By Default it's half the default smallest value but I find it cooler." +
+                + "\nI made it be 0.5 M/s (50 cm/s here since the config file only increment with whole numbers) here By Default it's half the default smallest value but I find it cooler." +
                 "\nset it to 1 if you want the vailla speed.",
-                new AcceptableValueRange<double>(0.0, 1000.0), null ));
+                new AcceptableValueRange<double>(1.0, 200.0), null ));
 
             Logistic_DRONE_CONFIG.DroneEnergyPerMeter = config.Bind(LOGISTIC_DRONE_CONFIG, "Energy consumption per meter (Vanilla is 20000)", 20000.0,
                 new ConfigDescription("Energy consumption per meter for Logistic Drones. ",
@@ -171,29 +169,23 @@ namespace DSP_Speed_and_Consumption_Tweaks
             //////////////////////////////////
             // Logistic Ships Configuration //
             //////////////////////////////////
-            Logistic_SHIP_CONFIG.maxShipTaxiSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Maximum taxi speed (Vanilla is ((shipSailSpeedModified/600) ^ 0.4) * 0.006f M/s)", 0.5,
-                new ConfigDescription("Taxi speed of Logistic Ships. ",
-                new AcceptableValueRange<double>(0.0, 10.0), null ));
+            Logistic_SHIP_CONFIG.approchSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Maximum approch speed (Vanilla is a fraction of the sailing speed)", 400.0,
+                new ConfigDescription("This value will replace the sailing speed for the computations.\n" +
+                "This speed will affect all phases of approching vessels.\n" +
+                "From entering planet controled space all the way to last landing manoevre.\n" +
+                "With this value the transitions between each phases is garantied to be smooth.\n" +
+                "The value is capped between 100 (garantied) and sailing speed (up to 10000 M/s).",
+                new AcceptableValueRange<double>(100.0, 10000.0), null ));
 
-            Logistic_SHIP_CONFIG.maxShipAtmoSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Maximum atmospheric speed (Vanilla is shipSailSpeedModified^2 * 0.4f / 600 M/s)", 40.0,
-                new ConfigDescription("Atmospheric speed of Logistic Ships. ",
-                new AcceptableValueRange<double>(0.0, 100.0), null ));
-            
-            Logistic_SHIP_CONFIG.maxShipNearSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Maximum near planete speed (Vanilla is shipSailSpeedModified * 0.012 * (log(shipSailSpeedModified / 600) + 1) ^ 0.4 M/s )", 400.0,
-                new ConfigDescription("Near planete speed of Logistic Ships. I capped it at half the Base Max Cruise Speed.",
-                new AcceptableValueRange<double>(0.0, 1000.0), null ));
-
-            Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Base (without research modifiers) Maximum cruise speed (Vanilla is 400 M/s)", 400.0,
-                new ConfigDescription("Max cruise speed for Logistic Ships. ",
-                new AcceptableValueRange<double>(0.0, 10000.0), null));
+            Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed = config.Bind(LOGISTIC_SHIP_SAIL, "Base cruise speed (Vanilla is 400 M/s)", 400.0,
+                new ConfigDescription("Max cruise speed for Logistic Ships. guaranteed to be at least 400 M/s",
+                new AcceptableValueRange<double>(0.01, 10000.0), null));
             
             Logistic_SHIP_CONFIG.ShipMaxCruiseSpeedUnits = config.Bind(LOGISTIC_SHIP_SAIL, "Warp speed modifier units", "M",
                 new ConfigDescription("Unit to use for warp speed",
                 new AcceptableValueList<string>("M", "AU", "LY")));
             
-            
-            
-            Logistic_SHIP_CONFIG.ShipMaxWarpSpeed = config.Bind(LOGISTIC_SHIP_WARP, "Maximum warp speed (Vanilla is 400000 M/s)", 0.1667,
+            Logistic_SHIP_CONFIG.ShipMaxWarpSpeed = config.Bind(LOGISTIC_SHIP_WARP, "Maximum warp speed (Vanilla is 400000 M/s = 0.1667 LY)", 0.1667,
                 new ConfigDescription("Base max warp speed of Logistic Ships. (Base as in before research modifier)",
                 new AcceptableValueRange<double>(0.0, 4000000.0), null ));
 

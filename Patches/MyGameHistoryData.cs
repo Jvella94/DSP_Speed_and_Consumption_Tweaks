@@ -91,7 +91,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 ? __instance.logisticShipSailSpeed
                     : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.LY
                     : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.AU
-                    : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * Config.M);
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value);
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -106,7 +106,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 ? __instance.logisticShipWarpSpeed
                     : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.LY
                     : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.AU
-                    : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value * Config.M);
+                    : Config.Logistic_SHIP_CONFIG.ShipMaxWarpSpeed.Value);
 
 
             //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"Value of __instance.logisticCourierSpeed      : {__instance.logisticCourierSpeed}");
