@@ -516,8 +516,12 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             double shipApprochSpeed = (double)Config.Logistic_SHIP_CONFIG.approchSpeed.Value;
             shipApprochSpeed = shipApprochSpeed > maxCruiseShipSpeed ? maxCruiseShipSpeed : shipApprochSpeed;
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"maxCruiseShipSpeed : {maxCruiseShipSpeed,12}");
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"shipApprochSpeed   : {shipApprochSpeed,12}");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"maxCruiseShipSpeed : {maxCruiseShipSpeed,12}");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"shipApprochSpeed   : {shipApprochSpeed,12}");
+            }
+            
 
 
             matcher.MatchForward(true,
@@ -543,10 +547,13 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 matcher.Advance(-3);
                 matcher.Set(opcode: OpCodes.Ldc_R4, operand: (float)(shipApprochSpeed));
 
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  apres  ---------------------");
-                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 152);
-                foreach (string expectedInstruction in expectedInstructions)
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  apres  ---------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 152);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
 
                 matcher.MatchForward(true,
                 new CodeMatch(i => i.opcode == OpCodes.Ldloc_S),
@@ -592,13 +599,14 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                         new CodeMatch(i => i.opcode == OpCodes.Add),                                            //add
                         new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && Convert.ToSingle(i.operand) == 0.15f)  //ldc.r4 0.15
                         );
-
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  avant  ---------------------");
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- Find where to modify inbound atmospheric flight");
-                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 1287);
-                    foreach (string expectedInstruction in expectedInstructions)
-                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
-
+                    if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                    {
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  avant  ---------------------");
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- Find where to modify inbound atmospheric flight");
+                        expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 1287);
+                        foreach (string expectedInstruction in expectedInstructions)
+                            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                    }
 
                     if (matcher.IsValid)
                     {
@@ -629,12 +637,14 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                             new CodeMatch(i => i.opcode == OpCodes.Ldloc_S)                                                  //ldloc.s 9
                         );
 
-                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  avant  ---------------------");
-                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- Find where to modify inbound atmospheric flight");
-                        expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 1297);
-                        foreach (string expectedInstruction in expectedInstructions)
-                            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
-
+                        if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                        {
+                            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------  avant  ---------------------");
+                            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- Find where to modify inbound atmospheric flight");
+                            expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 1297);
+                            foreach (string expectedInstruction in expectedInstructions)
+                                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                        }
 
                         if (matcher.IsValid)
                         {
@@ -924,11 +934,14 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                     new CodeMatch(OpCodes.Call)
                 );
 
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"--------------------- atmospheric speed {i} found ---------------------");
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"------------------------------- before --------------------------------");
-                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 81);
-                foreach (string expectedInstruction in expectedInstructions)
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"--------------------- atmospheric speed {i} found ---------------------");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"------------------------------- before --------------------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 81);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
 
                 if (matcher.IsValid)
                 {
@@ -952,10 +965,14 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 new CodeMatch(OpCodes.Call)
             );
 
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"------------------------------- before --------------------------------");
-            expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 81);
-            foreach (string expectedInstruction in expectedInstructions)
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"------------------------------- before --------------------------------");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 81);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+            }
+
             if (matcher.IsValid)
             {
 
