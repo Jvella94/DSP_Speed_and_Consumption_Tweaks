@@ -13,6 +13,10 @@ If you have any suggestions your welcome to find me on discord
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
 
+V 1.3.1 Correction to strange artefacts in the config module that appeared after the last update and corrupted the file
+
+V 1.3.0 Bug correction : removed appostrophes in the config file's description string ......
+
 V 1.2.0 Correction to the speed of vessels near planets (more aesthetic), correction to ETA computations.
 
 V 1.1.0 Added debugging log outputs and corrected a major bug where computers with period as a decimal separator would crash the mod.
