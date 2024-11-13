@@ -1,3 +1,5 @@
+V 1.4.0 Added Dark Fog Seed, Relay and Carrier speed modification
+
 V 1.3.2 Code Cleanning
 
 V 1.3.1 Correction to strange artefacts in the config module that appeared after the last update and corrupted the file

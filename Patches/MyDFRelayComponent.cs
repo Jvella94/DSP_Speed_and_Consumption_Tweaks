@@ -78,60 +78,110 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 
             }
 
-            matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && Convert.ToInt32(i.operand) == 1800)
-                );
+            float maxCarrierCruiseSpeed = (float)(
+            Config.Dark_Fog_CONFIG.maxCarrierSpeedUnit.Value == "M" ?
+                Config.Dark_Fog_CONFIG.maxCarrierSpeed.Value :
+                Config.Dark_Fog_CONFIG.maxCarrierSpeedUnit.Value == "AU" ?
+                Config.Dark_Fog_CONFIG.maxCarrierSpeed.Value * Config.AU :
+                Config.Dark_Fog_CONFIG.maxCarrierSpeed.Value * Config.LY
+            ) * 1.5f;
 
-            float maxCarrierCruiseSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * 1.5f;
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"maxCarrierCruiseSpeed is {maxCarrierCruiseSpeed}");
+            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"maxCarrierCruiseSpeedUnits is {Config.Dark_Fog_CONFIG.maxCarrierSpeedUnit.Value}");
+
+            matcher.MatchForward(true,
+                new CodeMatch(OpCodes.Ldc_R4, (object)900f)
+            );
+
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 10, expectedInstructionPosition: 753);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+            }
+
             if (matcher.IsValid)
             {
-                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
-                {
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
-                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
-                    foreach (string expectedInstruction in expectedInstructions)
-                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
-                }
+                matcher.Advance(-2);
+                matcher.Set(OpCodes.Ldc_R4, (float)(maxCarrierCruiseSpeed / 10.0));
 
-                matcher.RemoveInstruction();
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxCarrierCruiseSpeed));
+                matcher.Advance(2);
+                matcher.Set(OpCodes.Ldc_R4, (float)(maxCarrierCruiseSpeed / 2.0));
 
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
-                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
-                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  after  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 10, expectedInstructionPosition: 773);
                     foreach (string expectedInstruction in expectedInstructions)
                         DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
                 }
             }
 
             matcher.MatchForward(true,
-                    new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (Convert.ToDouble(i.operand) == 1800))
+                    new CodeMatch(OpCodes.Ldloc_S),
+                    new CodeMatch(OpCodes.Ldc_R4, (object)1800f),
+                    new CodeMatch(OpCodes.Ble_Un),
+                    new CodeMatch(OpCodes.Ldc_R4, (object)1800f)
                 );
 
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 10, expectedInstructionPosition: 773);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+            }
+
             if (matcher.IsValid)
+            {
+                matcher.Advance(-2);
+                matcher.Set(OpCodes.Ldc_R4, maxCarrierCruiseSpeed);
+
+                matcher.Advance(2);
+                matcher.Set(OpCodes.Ldc_R4, maxCarrierCruiseSpeed);
+
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 10, expectedInstructionPosition: 773);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
+            }
+
+            matcher.MatchForward(true,
+                    new CodeMatch(OpCodes.Ldc_R4, (object)0.3f),
+                    new CodeMatch(OpCodes.Ldloc_S),
+                    new CodeMatch(OpCodes.Ldfld),
+                    new CodeMatch(OpCodes.Ldc_R4, (object)1800.0f),
+                    new CodeMatch(OpCodes.Div),
+                    new CodeMatch(OpCodes.Call)
+                );
+
+            if(matcher.IsValid)
             {
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("------------  max Carrier Cruise Speed  --------------");
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("----------------------  before  ----------------------");
-                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 775);
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 777);
                     foreach (string expectedInstruction in expectedInstructions)
                         DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
                 }
 
-                matcher.RemoveInstruction();
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxCarrierCruiseSpeed));
+                matcher.Advance(-2);
+                matcher.Set(OpCodes.Ldc_R4, maxCarrierCruiseSpeed);
 
-                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                if(DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("-----------------------  after  ----------------------");
-                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 773);
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 777);
                     foreach (string expectedInstruction in expectedInstructions)
                         DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
                 }
-                
             }
             
             if (matcher.IsInvalid)
@@ -156,7 +206,13 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
             var matcher = new CodeMatcher(codeInstructions, il);
             StringCollection expectedInstructions;
 
-            float maxRelayCruiseSpeed = (float)Config.Logistic_SHIP_CONFIG.ShipMaxCruiseSpeed.Value * 2.0f;
+            float maxRelayCruiseSpeed = (float)(
+                    Config.Dark_Fog_CONFIG.maxRelaySpeedUnit.Value == "M" ?
+                        Config.Dark_Fog_CONFIG.maxRelaySpeed.Value :
+                        Config.Dark_Fog_CONFIG.maxRelaySpeedUnit.Value == "AU" ?
+                        Config.Dark_Fog_CONFIG.maxRelaySpeed.Value * Config.AU :
+                        Config.Dark_Fog_CONFIG.maxRelaySpeed.Value * Config.LY
+                    ) * 2.0f;
 
             if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
             {
@@ -213,15 +269,13 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                         DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
                 }
 
-                matcher.RemoveInstruction();
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
+                matcher.Set(opcode: OpCodes.Ldc_R4, operand: (float)(maxRelayCruiseSpeed));
 
                 matcher.MatchForward(true,
                         new CodeMatch(i => i.opcode == OpCodes.Ldc_R4 && (Convert.ToSingle(i.operand) == 1000.0f))
                     );
 
-                matcher.RemoveInstruction();
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, maxRelayCruiseSpeed));
+                matcher.Set(opcode: OpCodes.Ldc_R4, operand: (float)(maxRelayCruiseSpeed));
 
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {

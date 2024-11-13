@@ -269,7 +269,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         // 1.0.0
         private const string MyGUID = "com.hiul.DSP_Speed_and_Consumption_Tweaks";
         private const string PluginName = "DSP_Speed_and_Consumption_Tweaks";
-        public const string VersionString = "1.3.2";
+        public const string VersionString = "1.4.0";
         public static bool DEBUG = false;
         public static StringCollection expectedInstructions = null;
         public static string pluginPath = "";
@@ -501,8 +501,14 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
             }
             harmony.PatchAll(typeof(MyDFRelayComponent));
-            
 
+            if (DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|       Patching MyDFTinderComponent     |");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
+            }
+            harmony.PatchAll(typeof(MyDFTinderComponent));
         }
         public void Start()
         {

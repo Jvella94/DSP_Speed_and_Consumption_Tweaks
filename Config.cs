@@ -20,6 +20,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
         private static readonly string LOGISTIC_SHIP_WARP = "Logistic Ships Warp Configuration";
         private static readonly string LOGISTIC_SHIP_SAIL = "Logistic Ships Cruise Configuration";
         private static readonly string LOGISTIC_DRONE_CONFIG = "Logistic Drones Configuration";
+        private static readonly string DARK_FOG_CONFIG = "Dark Fog Configuration";
         private static readonly string DEBUG_CONFIG = "Activate DEBUG messages";
         //private static readonly string UTILITY_SECTION = "Utility";
 
@@ -69,9 +70,6 @@ namespace DSP_Speed_and_Consumption_Tweaks
             public static ConfigEntry<double> ShipEnergyCostPerWarp;
         }
 
-
-
-
         public static class Logistic_DRONE_CONFIG
         {
             //// drone settings
@@ -80,7 +78,17 @@ namespace DSP_Speed_and_Consumption_Tweaks
             public static ConfigEntry<double> DroneEnergyPerMeter;
             public static ConfigEntry<double> DroneEnergyTakeOff;
         }
-            
+        
+        public static class Dark_Fog_CONFIG
+        {
+            public static ConfigEntry<double> maxSeedSpeed;
+            public static ConfigEntry<string> maxSeedSpeedUnit;
+            public static ConfigEntry<double> maxRelaySpeed;
+            public static ConfigEntry<string> maxRelaySpeedUnit;
+            public static ConfigEntry<double> maxCarrierSpeed;
+            public static ConfigEntry<string> maxCarrierSpeedUnit;
+        }
+
 
         public static class Debug_CONFIG
         {
@@ -126,9 +134,9 @@ namespace DSP_Speed_and_Consumption_Tweaks
                     new AcceptableValueRange<double>(0.0, 240000.0), null));
 
 
-            /////////////////////////////////
+            ///////////////////////////////
             // ICARUS Warp Configuration //
-            /////////////////////////////////
+            ///////////////////////////////
             //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("1");
             Mecha_WARP_CONFIG.maxWarpSpeed = config.Bind(MECHA_WARP_CONFIG, "Maximum absolute warp speed (Vanilla is 480000 M/s)", 0.20,
                 new ConfigDescription("Base max warp speed of Icarus.",
@@ -218,6 +226,32 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 new ConfigDescription("Energy consumption on take off for Logistic Ships. (Vanilla is 6000000)",
                 new AcceptableValueRange<double>(0.0, 12000000.0), null ));
             //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("9");
+
+
+            ////////////////////////////
+            // Dark Fog Configuration //
+            ////////////////////////////
+            Dark_Fog_CONFIG.maxSeedSpeed = config.Bind(DARK_FOG_CONFIG, "Seed speed (Vanilla is 1200 M/s)", 1200.0,
+                new ConfigDescription("Max seed speed.",
+                new AcceptableValueRange<double>(0.01, 10000.0), null));
+            //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("2");
+            Dark_Fog_CONFIG.maxSeedSpeedUnit = config.Bind(DARK_FOG_CONFIG, "Seed speed modifier units", "M",
+                new ConfigDescription("Unit to use for Seed speed",
+                new AcceptableValueList<string>("M", "AU", "LY")));
+            Dark_Fog_CONFIG.maxRelaySpeed = config.Bind(DARK_FOG_CONFIG, "Relay speed (Vanilla is 1000 M/s)", 1000.0,
+                new ConfigDescription("Max relay speed.",
+                new AcceptableValueRange<double>(0.01, 10000.0), null));
+            Dark_Fog_CONFIG.maxRelaySpeedUnit = config.Bind(DARK_FOG_CONFIG, "Relay speed modifier units", "M",
+                new ConfigDescription("Unit to use for Relay speed",
+                new AcceptableValueList<string>("M", "AU", "LY")));
+            Dark_Fog_CONFIG.maxCarrierSpeed = config.Bind(DARK_FOG_CONFIG, "Carrier speed (Vanilla is 1800 M/s)", 1800.0,
+                new ConfigDescription("Max carrier speed.",
+                new AcceptableValueRange<double>(0.01, 10000.0), null));
+            Dark_Fog_CONFIG.maxCarrierSpeedUnit = config.Bind(DARK_FOG_CONFIG, "Carrier speed modifier units", "M",
+                new ConfigDescription("Unit to use for Carrier speed",
+                new AcceptableValueList<string>("M", "AU", "LY")));
+
+
             //////////////////////////////////
             // DEBUG CONFIG                 //
             //////////////////////////////////
