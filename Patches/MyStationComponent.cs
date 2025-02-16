@@ -8,6 +8,7 @@ using System.Reflection.Emit;
 using System.Text;
 using HarmonyLib;
 using UnityEngine;
+using static DSP_Speed_and_Consumption_Tweaks.Config;
 using static DSP_Speed_and_Consumption_Tweaks.DSP_Speed_and_Consumption_Tweaks_Plugin;
 
 namespace DSP_Speed_and_Consumption_Tweaks.Patches
@@ -26,7 +27,6 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
     {
         static public bool showFirst = false;
         static public int position = 0;
-        static public double maxDroneTaxiSpeed = Config.Logistic_DRONE_CONFIG.DroneMaxTaxiSpeed.Value / 100.0;
 
         /// <summary>
         /// Patches the StationComponent InternalTickLocal method with Transpiler code.
@@ -90,7 +90,10 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
 
             }
-
+            double maxDroneTaxiSpeed = Config.Logistic_DRONE_CONFIG.DroneMaxTaxiSpeed.Value / 100.0;
+            //double maxDroneSpeed = Config.Logistic_DRONE_CONFIG.DroneMaxSpeed.Value;
+            double DroneEnergyTakeOff = Config.Logistic_DRONE_CONFIG.DroneEnergyTakeOff.Value;
+            double DroneEnergyPerMeter = Config.Logistic_DRONE_CONFIG.DroneEnergyPerMeter.Value;
 
             matcher.MatchForward(true,
                 new CodeMatch(OpCodes.Ldc_I4_0),
@@ -109,8 +112,7 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                     foreach (string expectedInstruction in DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 114))
                         DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"{expectedInstruction}");
                 }
-                matcher.RemoveInstruction();
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_I4, (int)Config.Logistic_DRONE_CONFIG.DroneEnergyTakeOff.Value));
+                matcher.Set(OpCodes.Ldc_I4, (int)DroneEnergyTakeOff);
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-------------  after  -------------");
@@ -148,11 +150,9 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                             DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"{expectedInstruction}");
                     }
                     matcher.Advance(1);
-                    matcher.RemoveInstruction();
-                    matcher.Insert(new CodeInstruction(OpCodes.Ldc_R8, Config.Logistic_DRONE_CONFIG.DroneEnergyPerMeter.Value));
+                    matcher.Set(OpCodes.Ldc_R8, DroneEnergyPerMeter);
                     matcher.Advance(4);
-                    matcher.RemoveInstruction();
-                    matcher.Insert(new CodeInstruction(OpCodes.Ldc_R8, Config.Logistic_DRONE_CONFIG.DroneEnergyTakeOff.Value));
+                    matcher.Set(OpCodes.Ldc_R8, DroneEnergyTakeOff);
                     
                     matcher.Advance(-5);
                     if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
@@ -189,10 +189,9 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 
             }
             if (matcher.IsValid){
-                matcher.SetAndAdvance(
-                    OpCodes.Ldc_R4, (float)maxDroneTaxiSpeed
+                matcher.Set(
+                    OpCodes.Ldc_R4, (float)(maxDroneTaxiSpeed * 8.0)
                 );
-                matcher.RemoveInstructions(3);
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-------------  after  -------------");
@@ -208,11 +207,44 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
                 return codeInstructions;
             }
+            matcher.MatchForward(true,
+                new CodeMatch(OpCodes.Ldc_R4, (float) 1f / 60f),
+                new CodeMatch(OpCodes.Ldarg_S),
+                new CodeMatch(OpCodes.Mul),
+                new CodeMatch(OpCodes.Stloc_S)
+                );
+            matcher.Advance(-2);
+            if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"------ max drone speed -------");
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-------------  before  ------------");
+                foreach (string expectedInstruction in DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 39))
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"{expectedInstruction}");
+
+            }
+            if (matcher.IsValid)
+            {
+                /*matcher.Set(
+                    OpCodes.Ldc_R4, (float)maxDroneSpeed
+                );*/
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-------------  after  -------------");
+                    foreach (string expectedInstruction in DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 20, expectedInstructionPosition: 39))
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"{expectedInstruction}");
+                }
+            }
+            else
+            {
+
+                foreach (string expectedInstruction in DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 20, expectedInstructionPosition: 39))
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"{expectedInstruction}");
+
+                return codeInstructions;
+            }
             return matcher.InstructionEnumeration();
 
         }
-
-        private delegate double setMaxTaxiSpeed(double _currentSpeed);
 
         [HarmonyPatch(nameof(StationComponent.DetermineDispatch))]
         [HarmonyTranspiler]
@@ -373,10 +405,12 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
             }
 
+            double maxDroneTaxiSpeed = Config.Logistic_DRONE_CONFIG.DroneMaxTaxiSpeed.Value / 100.0;
+            //double maxDroneSpeed = Config.Logistic_DRONE_CONFIG.DroneMaxSpeed.Value;
+
             if (matcher.IsValid)
             {
-                matcher.RemoveInstructions(5);
-                matcher.Insert(new CodeInstruction(OpCodes.Ldc_R4, (float)maxDroneTaxiSpeed));
+                matcher.Set(OpCodes.Ldc_R4, (float)maxDroneTaxiSpeed);
                 if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
                 {
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------  après  ---------------");
@@ -386,13 +420,48 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------------------------");
                     DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("Match found and patched");
                 }
-                return matcher.InstructionEnumeration();
+
+                matcher.MatchForward(true,
+                    new CodeMatch(OpCodes.Ldarg_2)
+                );
+                if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                {
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---- vessels max Drone Speed ----");
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"--------------- before ---------------");
+                    expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 5, expectedInstructionPosition: 28);
+                    foreach (string expectedInstruction in expectedInstructions)
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                }
+
+                if (matcher.IsValid)
+                {
+                    //matcher.Set(OpCodes.Ldc_R4, (float)maxDroneSpeed);
+                    if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
+                    {
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------  après  ---------------");
+                        expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 10, expectedInstructionPosition: 28);
+                        foreach (string expectedInstruction in expectedInstructions)
+                            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($" {expectedInstruction}");
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"---------------------------------------");
+                        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("Match found and patched");
+                    }
+
+                }
+
             }
-            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"No match found in InternalTickLocal_Transpiler code incompatible with mod Version {DSP_Speed_and_Consumption_Tweaks_Plugin.VersionString}");
-            expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 20, expectedInstructionPosition: 28);
-            foreach (string expectedInstruction in expectedInstructions)
-                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($" {expectedInstruction}");
-            return codeInstructions;
+            
+            if (matcher.IsInvalid)
+            {
+                DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($"No match found in InternalTickLocal_Transpiler code incompatible with mod Version {DSP_Speed_and_Consumption_Tweaks_Plugin.VersionString}");
+                expectedInstructions = DSP_Speed_and_Consumption_Tweaks_Plugin.returnInstructions(ref matcher, 20, expectedInstructionPosition: 28);
+                foreach (string expectedInstruction in expectedInstructions)
+                    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogError($" {expectedInstruction}");
+
+                return codeInstructions;
+            }
+
+            return matcher.InstructionEnumeration();
+            
 
         }
 
@@ -424,28 +493,6 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
 
             return false;
         }
-
-
-        //[HarmonyPatch(nameof(StationComponent.InternalTickRemote))]
-        //[HarmonyPrefix]
-        //public static bool InternalTickRemote_Prefix(StationComponent __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, StationComponent[] gStationPool, AstroData[] astroPoses, ref VectorLF3 relativePos, ref Quaternion relativeRot, bool starmap, int[] consumeRegister)
-        //{
-        //    if (DSP_Speed_and_Consumption_Tweaks_Plugin.DEBUG)
-        //    {
-        //        if (__instance.workShipDatas[0].planetA == 5410 || __instance.workShipDatas[0].planetB == 0) return true;
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("In StationComponent InternalTickRemote method Prefix");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- __instance.id = {__instance.gid}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- ship.planetA = {__instance.workShipDatas[0].planetA}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- ship.planetB = {__instance.workShipDatas[0].planetB}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- ship.distanceA = {(__instance.workShipDatas[0].uPos - astroPoses[__instance.workShipDatas[0].planetA].uPos).magnitude}--");
-        //        if (__instance.workShipDatas[0].planetB >= 0)
-        //        {
-        //            DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- ship.distanceB = {(__instance.workShipDatas[0].uPos - astroPoses[__instance.workShipDatas[0].planetB].uPos).magnitude}--");
-        //        }
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- __instance.shipdiskpos.x = {__instance.shipDiskPos[__instance.workShipDatas[0].shipIndex].x}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- __instance.shipdiskpos.y = {__instance.shipDiskPos[__instance.workShipDatas[0].shipIndex].y}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- __instance.shipdiskpos.z = {__instance.shipDiskPos[__instance.workShipDatas[0].shipIndex].z}--");
-        //        DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"-- __instance.shipdiskpos.altitude = {__instance.shipDiskPos[__instance.workShipDatas[0].shipIndex].magnitude}--");
 
 
 
@@ -521,8 +568,6 @@ namespace DSP_Speed_and_Consumption_Tweaks.Patches
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"maxCruiseShipSpeed : {maxCruiseShipSpeed,12}");
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo($"shipApprochSpeed   : {shipApprochSpeed,12}");
             }
-            
-
 
             matcher.MatchForward(true,
                 new CodeMatch(i => i.opcode == OpCodes.Ldarg_3),

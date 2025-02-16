@@ -269,8 +269,8 @@ namespace DSP_Speed_and_Consumption_Tweaks
         // 1.0.0
         private const string MyGUID = "com.hiul.DSP_Speed_and_Consumption_Tweaks";
         private const string PluginName = "DSP_Speed_and_Consumption_Tweaks";
-        public const string VersionString = "1.4.0";
-        public static bool DEBUG = false;
+        public const string VersionString = "1.5.1";
+        public static bool DEBUG = true;
         public static StringCollection expectedInstructions = null;
         public static string pluginPath = "";
         public static bool generateCsvFile = false;
@@ -424,16 +424,6 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 }
             }
 
-
-
-            //if (DEBUG)
-            //{
-            //    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            //    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|    Ships consumption Configuration     |");
-            //    DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
-            //}
-            //harmony.PatchAll(typeof(DSP_Speed_and_Consumption_Tweaks_Plugin));
-
             if (DEBUG)
             {
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+---------------------------------+");
@@ -469,7 +459,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("|        Pacthing PlayerControler        |");
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");
             }
-            harmony.PatchAll(typeof(MyPlayerController));
+            harmony.PatchAll(typeof(MyPlayerMove_Sail));
             if (DEBUG)
             {
                 DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("+----------------------------------------+");

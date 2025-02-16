@@ -36,6 +36,7 @@ namespace DSP_Speed_and_Consumption_Tweaks
             public static ConfigEntry<double> MaxCruiseSpeed;
             public static ConfigEntry<string> MaxCruiseSpeedUnit;
             public static ConfigEntry<double> CruiseMaxAccelerationRate;
+            public static ConfigEntry<double> CruiseAccelerationRateMultiplier;
             public static ConfigEntry<double> CruiseAccelerationEnergyCost;
 
         }
@@ -123,6 +124,11 @@ namespace DSP_Speed_and_Consumption_Tweaks
             Mecha_CRUISE_CONFIG.CruiseMaxAccelerationRate = config.Bind(MECHA_CRUISE_CONFIG, "Acceleration rate in m/s2 (Vanilla is 20 M/s2)", 20.0,
                 new ConfigDescription("Max cruise acceleration rate for Icarus.",
                     new AcceptableValueRange<double>(0.0, 10000.0), null));
+
+            Mecha_CRUISE_CONFIG.CruiseAccelerationRateMultiplier = config.Bind(MECHA_CRUISE_CONFIG, "Multiplier of the current cruise speed to add each second", 1.0,
+                new ConfigDescription("Max cruise acceleration rate for Icarus.",
+                new AcceptableValueRange<double>(0.1, 10.0), null)
+            );
 
             //DSP_Speed_and_Consumption_Tweaks_Plugin.Log.LogInfo("1");
             Mecha_CRUISE_CONFIG.CruiseAccelerationEnergyCost = config.Bind(MECHA_CRUISE_CONFIG, "Energy used to maintain cruise acceleration (Vanilla is 24000 )", 24000.0,

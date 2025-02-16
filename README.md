@@ -13,6 +13,13 @@ If you have any suggestions your welcome to find me on discord
 here > https://discord.gg/BHCZ67hN
 or on the discord > DSP_Modding 
 
+v 1.5.1	Corrected an error in the code that removed tech level improvment to drone speed.
+		Techlevel will apply correctly now. (carefull if you made the base speed high concider reducing it to more appropriate levels)
+
+V 1.5.0 Added Icarus actual sail acceleration rate Tweak 
+
+V 1.4.1 Dark Fog Bug Fix
+
 V 1.4.0 Added Dark Fog Seed, Relay and Carrier speed modification
 
 V 1.3.2 Code Cleanning
